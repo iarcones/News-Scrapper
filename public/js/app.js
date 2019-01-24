@@ -13,7 +13,7 @@ $(document).on("click", "#mynews", function () {
 })
 $(document).on("click", "#scrape", function () {
   console.log("onclick scrape");
-  window.location.href = "/"
+  window.location.href = "/scrape"
 })
 $(document).on("click", "#home", function () {
   console.log("onclick home");
@@ -58,49 +58,6 @@ $(document).on("click", ".deletearticle", function () {
 });
 
 
-// $(document).on("click", "#scrape", function () {
-//   console.log("click en scrape");
-
-//   $.ajax({
-//     method: "GET",
-//     url: "/scrape",
-//   })
-//     .then(function (data) {
-//       console.log(".......RENDER......................")
-//       // res.render("index", hbsObject)
-
-//     });
-
-// })
-
-$(document).on("click", "#savenote", function () {
-  console.log(".......savenote")
-  // Grab the id associated with the article from the submit button
-  var id = $(this).attr("data-id");
-  var title = $("#notetitle").val().trim();
-  var comment = $("#notebody").val().trim();
-
-  // Run a POST request to change the note, using what's entered in the inputs
-  $.ajax({
-    method: "POST",
-    url: "/articlenote/" + id,
-    data: {
-      // Value taken from note textarea
-      title: title,
-      comment: comment
-    }
-  })
-    // With that done
-    .then(function (data) {
-      // Log the response
-      console.log(data);
-      // Empty the notes section
-    });
-
-  // Also, remove the values entered in the input and textarea for note entry
-  $("#notetitle").val("");
-  $("#notebody").val("");
-});
 
 // 1. click listener on "add note"
 // 2. ajax call to our server for note
@@ -117,7 +74,7 @@ $(document).on("click", "#viewnotes", function () {
     .then(function (data) {
       console.log(data);
       $("#modalnote").find("#thenotes").empty();
-      $("#modalnote").find("#thenotes").html("<p>hola</p>");
+
       console.log(data.notes)
       for (let i = 0; i < data.notes.length; i++) {
         let title = data.notes[i].title
@@ -149,71 +106,33 @@ $(document).on("click", "#savenote", function () {
   var title = $("#notetitle").val().trim();
   var comment = $("#notebody").val().trim();
 
-  // Run a POST request to change the note, using what's entered in the inputs
-  $.ajax({
-    method: "POST",
-    url: "/articlenote/" + id,
-    data: {
-      // Value taken from note textarea
-      title: title,
-      comment: comment
-    }
-  })
-    // With that done
-    .then(function (data) {
-      // Log the response
-      console.log(data);
-      // Empty the notes section
-    });
+  if (!title) {
+    console.log("title empty")
+  }
+  else {
+    // Run a POST request to change the note, using what's entered in the inputs
+    $.ajax({
+      method: "POST",
+      url: "/articlenote/" + id,
+      data: {
+        // Value taken from note textarea
+        title: title,
+        comment: comment
+      }
+    })
+      // With that done
+      .then(function (data) {
+        // Log the response
+        console.log(data);
+        // Empty the notes section
+      });
 
-  // Also, remove the values entered in the input and textarea for note entry
-  $("#notetitle").val("");
-  $("#notebody").val("");
+    // Also, remove the values entered in the input and textarea for note entry
+    $("#notetitle").val("");
+    $("#notebody").val("");
+  }
 });
 
 
 
 
-// $('#modalnote').on('show.bs.modal', function (event) {
-  //   console.log(";;;;;;;;;modal")
-  //   let id = $(event.relatedTarget).data('id');
-  //   // let notes = $(event.relatedTarget).data('notes');
-  //   // console.log(notes)
-  //   // notes = notes.replace(/[&\/\\#,+()$~%.'":*?<>{}]_/g, '');
-  //   // notes = notes.replace(/_↵/g, '');
-  //   // let a = [notes]
-  //   // console.log(a)
-  //   // console.log(notes)
-  //   // var JsonObject= JSON.parse(notes);
-  //   // console.log(JsonObject)
-  
-  //   $(this).find(".notes").empty();
-  //   // console.log(notes.length)
-  //   $.ajax({
-  //     method: "GET",
-  //     url: "/articles/notes/" + id,
-  //   })
-  //     // With that done
-  //     .then(function (data) {
-  //       // Log the response
-  //       console.log(data);
-  //       // Empty the notes section
-  
-  
-  //       for (let i = 0; i < data.notes.length; i++) {
-  //         let title = data.notes[i].title
-  //         let comment = data.notes[i].comment
-  //         console.log(title, comment)
-  //         let temp = (`<p>Title: ${title} Comment: ${comment}`)
-  //         console.log(temp)
-  
-  //         $(this).find("#notes").append(temp);
-  //       }
-  
-  //       let temp = (`<button class="btn-sm btn-success" id="savenote" data-toggle="modal" data-target="#modalnote" data-id="${id}">Add to Saved!</button>`)
-  
-  //       console.log("temp: ", temp)
-  //       $(this).find("#buttonsaved").empty();
-  //       $(this).find("#buttonsaved").append(temp);
-  //     });
-  // });
