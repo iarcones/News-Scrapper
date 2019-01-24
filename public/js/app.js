@@ -11,6 +11,10 @@ $(document).on("click", "#mynews", function () {
   console.log("onclick mynews");
   window.location.href = "/mynews"
 })
+$(document).on("click", "#scrape", function () {
+  console.log("onclick scrape");
+  window.location.href = "/"
+})
 $(document).on("click", "#home", function () {
   console.log("onclick home");
   window.location.href = "/"
