@@ -5,9 +5,9 @@ var mongoose = require("mongoose");
 var Handlebars     = require('handlebars');
 var HandlebarsIntl = require('handlebars-intl');
 
-// var cookieParser = require('cookie-parser')
 
-var PORT = 8080;
+
+var PORT = process.env.PORT || 8080;
 
 // Initialize Express
 var app = express();
