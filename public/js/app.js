@@ -13,7 +13,7 @@ $(document).on("click", "#mynews", function () {
 })
 $(document).on("click", "#scrape", function () {
   console.log("onclick scrape");
-  window.location.href = "/scrape"
+  window.location.href = "/"
 })
 $(document).on("click", "#home", function () {
   console.log("onclick home");

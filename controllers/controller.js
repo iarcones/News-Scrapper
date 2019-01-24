@@ -7,13 +7,13 @@ var db = require("../models");
 
 module.exports = function (app) {
 
-    app.get("/", function (req, res) {
-        //   res.render("index");
-        res.redirect("/articles")
-    });
+    // app.get("/", function (req, res) {
+    //     //   res.render("index");
+    //     res.redirect("/articles")
+    // });
 
     // A GET route for scraping the echoJS website
-    app.get("/scrape", function (req, res) {
+    app.get("/", function (req, res) {
 
         request.get("https://abcnews.go.com/Politics", function (error, response, body) {
 
