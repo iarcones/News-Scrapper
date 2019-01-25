@@ -1,6 +1,6 @@
 var cheerio = require("cheerio");
 var request = require("request")
-
+var Pro = require("bluebird");
 
 // Require all models
 var db = require("../models");
@@ -12,59 +12,70 @@ module.exports = function (app) {
     //     res.redirect("/articles")
     // });
 
-    // A GET route for scraping the echoJS website
+  
     app.get("/", function (req, res) {
 
         request.get("https://abcnews.go.com/Politics", function (error, response, body) {
 
             console.log('error:', error); // Print the error if one occurred
-            console.log('statusCode:', response && response.statusCode); // Print the response status code if 
+            console.log('statusCode:', response && response.statusCode); // Print the 
 
             var $ = cheerio.load(body);
 
+            var totArticles = { "articles": [] };
+            
 
-            $(".tag-block")
-                .each(function (i, element) {
+            Pro.each($(".tag-block").get(), function (newArticles) {
 
-                    // Save an empty result object
+                console.log(newArticles)
+                var result = {};
+                result.title = $(newArticles).find(".black-ln").text().trim()
+                result.summary = $(newArticles).find(".desc").text().trim()
+                result.link = $(newArticles).find("a").attr("href")
+                result.image = $(newArticles).find("img").attr("data-src")
 
-                    console.log(this)
+                totArticles.articles.push(result);
 
-                    var result = {};
+            })
+                .then(function () {
 
-                    result.title = $(this).find(".black-ln").text().trim()
-                    result.summary = $(this).find(".desc").text().trim()
-                    result.link = $(this).find("a").attr("href")
-                    result.image = $(this).find("img").attr("data-src")
+                    updateDB(totArticles)
 
-                    console.log("result: ", result)
-                    // Create a new Article using the `result` object built from scraping
-                    db.Article.create(result)
-                        .then(function (dbArticle) {
-
-                            // console.log("dbArticle........")
-                            // console.log(dbArticle);
-
-                        })
-                        .catch(function (err) {
-                            // If an error occurred, log it
-                            console.log("err........")
-                            console.log(err);
-                            console.log("code...................: ", err.name)
-                            console.log("code...................: ", err.code)
-
-                        });
-                });
-            res.redirect("/articles")
+                }).then(function () {
+                    res.redirect("/articles")
+                })
         });
 
     })
+
+    function updateDB(result) {
+
+        /// update the DB in desc order to keep the last news created in the last order, in this way when we call the db.Article.find() we sort in desc order to keep always the latest news the first to see in screen (the html for scraping is getting the info top to down)
+
+        for (var i = result.articles.length - 1; i >= 0; i--) {
+            db.Article.create(result.articles[i])
+                .then(function (dbArticle) {
+
+                    // console.log("dbArticle........")
+                    // console.log(dbArticle);
+
+                })
+                .catch(function (err) {
+                    // If an error occurred, log it
+                    console.log("err........")
+                    console.log(err);
+                    console.log("code...................: ", err.name)
+                    console.log("code...................: ", err.code)
+
+                });
+        }
+    }
 
     // Route for getting all Articles from the db
     app.get("/articles", function (req, res) {
         console.log("/articles")
         // Grab every document in the Articles collection
-        db.Article.find({ saved: "false" })
+        db.Article.find({ saved: "false" }).sort([['date', -1]])
             .then(function (dbArticle) {
                 var hbsObject = {
                     articles: dbArticle
@@ -84,7 +95,7 @@ module.exports = function (app) {
         console.log("/mynews")
 
         // Grab every ARTICLE SAVED
-        db.Article.find({ saved: "true" })
+        db.Article.find({ saved: "true" }).sort([['date', -1]])
             .populate("notes")
             .then(function (dbArticle) {
                 var hbsObject = {
@@ -130,8 +141,8 @@ module.exports = function (app) {
             });
     });
 
-    // DELETE ARTICLE
-    app.put('/articles/delete/:id', function (req, res) {
+    // UNSAVE ARTICLE
+    app.put('/articles/unsave/:id', function (req, res) {
 
         db.Article.findOneAndUpdate({ _id: req.params.id }, { $set: { saved: false } })
             .then(function (dbArticle) {

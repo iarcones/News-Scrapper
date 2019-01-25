@@ -1,11 +1,3 @@
-// // Grab the articles as a json
-// $.getJSON("/articles", function(data) {
-//     // For each one
-//     for (var i = 0; i < data.length; i++) {
-//       // Display the apropos information on the page
-//       $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-//     }
-//   });
 
 $(document).on("click", "#mynews", function () {
   console.log("onclick mynews");
@@ -40,14 +32,14 @@ $(document).on("click", ".savearticle", function () {
 });
 
 $(document).on("click", ".deletearticle", function () {
-  // Grab the id associated with the article from the submit button
+
   console.log("click on save")
   var id = $(this).attr("data-id");
 
-  // Run a POST request to change the note, using what's entered in the inputs
+  
   $.ajax({
     method: "PUT",
-    url: "/articles/delete/" + id,
+    url: "/articles/unsave/" + id,
   })
     // With that done
     .then(function (data) {
@@ -62,7 +54,7 @@ $(document).on("click", ".deletearticle", function () {
 // 1. click listener on "add note"
 // 2. ajax call to our server for note
 // 3. in promise, populate modal (treat )
-// 4. show the modal ($("#myModal").show())
+// 4. show the modal ($("#modalnote").modal("show"))
 
 $(document).on("click", "#viewnotes", function () {
   console.log(".......viewnotes")
@@ -79,24 +71,36 @@ $(document).on("click", "#viewnotes", function () {
       for (let i = 0; i < data.notes.length; i++) {
         let title = data.notes[i].title
         let comment = data.notes[i].comment
+        let idNote = data.notes[i]._id
         console.log(title, comment)
-        let temp = (`<p>Title: ${title} Comment: ${comment}`)
-        console.log(temp)
 
-        $("#modalnote").find("#thenotes").append(temp);
+        let tempNote = `<dic class="list-group-item list-group-item-action  mb-1">
+        <div class="justify-content-between">
+          <h5 class="mb-1">${title}</h5>
+          <div class="row">
+          <div class="col-11">
+          <small>${comment}</small>
+          </div>
+          <div class="col-1">
+          <button class="btn-sm btn-danger deletenote" data-toggle="modal" data-target="#modalnote" data-idNote="${idNote}" data-idArticle="${id}">X</button>
+          </div>
+        </div></div>`
+
+        console.log(tempNote)
+
+        $("#modalnote").find("#thenotes").append(tempNote);
       }
 
-      let temp = (`<button class="btn-sm btn-success" id="savenote" data-toggle="modal" data-target="#modalnote" data-id="${id}">Add to Saved!</button>`)
 
-      console.log("temp: ", temp)
-
+      let tempButton = (`<button class="btn-sm btn-success" id="savenote" data-toggle="modal" data-target="#modalnote" data-id="${id}">Add to Saved!</button>`)
       $("#modalnote").find("#buttonsaved").empty();
-      $("#modalnote").find("#buttonsaved").append(temp);
+      $("#modalnote").find("#buttonsaved").append(tempButton);
 
       $("#modalnote").modal("show")
 
     });
 })
+
 
 
 $(document).on("click", "#savenote", function () {
@@ -134,5 +138,23 @@ $(document).on("click", "#savenote", function () {
 });
 
 
+$(document).on("click", ".deletenote", function () {
+  console.log(".......deletenote")
+  // Grab the id associated with the article from the submit button
 
+  var idArticle = $(this).attr("data-idArticle");
+  var idNote = $(this).attr("data-idNote");
 
+    $.ajax({
+      method: "DELETE",
+      url: "/notes/delete/" + idNote,
+    })
+    
+      .then(function (data) {
+   
+        console.log(data);
+    
+      });
+
+  
+  })
