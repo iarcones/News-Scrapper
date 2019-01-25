@@ -2,7 +2,8 @@
 
 ## Overview
 
-In this project, I am using Node, Express, Handlebars, Cheerio, Express-handlebar, MongoDB, Mongoose, Body-parser, Cheerio, Request. Deployed in Heroku.
+This is a Bootcamp project.
+In this project I am using Node, Express, Handlebars, Cheerio, Express-handlebar, MongoDB, Mongoose, Body-parser, Cheerio, Request, Bluebird. Deployed in Heroku.
 
 Try the app here: 
 
@@ -30,10 +31,10 @@ Try the app here:
 
 ## Comments
 
-In this project was important:
-- 
-- 
-- 
+Challenges:
+- Scrapping, use Cheerio, analyze several webs to find the best way to get good info
+- Realize that you are scrapping top to down the HTML, I needed to find a way for move from FIFO to LIFO to update the MongoDB, sound easy but it is not
+- It was mandatory to use Node, Express, Handlebars, Cheerio, Express-handlebar, MongoDB, Mongoose, Body-parser, Cheerio, Request. Sometimes Handlebar can be complicated if you are having to many async functions playing around.
 
 ## Author
 
